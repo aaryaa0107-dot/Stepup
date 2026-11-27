@@ -335,6 +335,30 @@ body.intro .mission:nth-child(2){animation-delay:.22s}
 body.intro .mission:nth-child(3){animation-delay:.28s}
 body.intro .plank-card{animation-delay:.34s}
 body.intro .tip{animation-delay:.4s}
+.pchip{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;background:var(--card);border:1.5px dashed var(--line);border-radius:999px;padding:11px 16px;font-weight:700;color:var(--muted);text-align:left}
+.pdot{width:12px;height:12px;border-radius:50%;background:var(--violet);flex:none}
+.pcard{margin-top:14px;border:2px solid var(--violet)}
+.pc-top{display:flex;gap:14px;align-items:center}
+.pday{width:64px;height:64px;border-radius:50%;background:var(--violet);color:var(--on-violet);display:grid;place-items:center;align-content:center;font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1;flex:none}
+.pday small{font-family:var(--body);font-size:.7rem;font-weight:700;opacity:.85}
+.dayc.per::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--violet);margin-top:2px}
+.ptog{height:42px;min-width:42px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--violet);display:flex;align-items:center;justify-content:center;gap:3px;padding:0 9px;font-weight:800}
+.ptog.on{background:var(--violet);border-color:var(--violet);color:var(--on-violet)}
+.ptog.on svg path{fill:currentColor}
+.top-right{gap:6px;flex:none}
+.top{gap:10px}
+.hello{font-size:clamp(1.3rem,5.6vw,1.85rem);line-height:1.1}
+.top>div:first-child{flex:1;min-width:0}
+.top-right .icon-btn,.top-right .ptog{width:38px;height:38px;min-width:38px}
+.top-right .ptog.on{width:auto}
+.top-right .flame{padding:6px 10px}
+.symbox{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.sym{display:flex;align-items:center;gap:8px;margin-top:8px}
+.sym>span{width:58px;flex:none;font-size:.85rem;font-weight:700;color:var(--muted)}
+.symopts{display:flex;gap:6px;flex:1}
+.symopts button{flex:1;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 4px;font-size:.82rem;font-weight:700;color:var(--ink)}
+.symopts button[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:var(--on-violet)}
+.symnote{background:var(--soft);border-radius:12px;padding:8px 10px;margin:10px 0 0}
 </style>
 </head>
 <body>
@@ -409,6 +433,7 @@ const P2 = {
   C:{t:"Dumbbell day C",mins:35,items:[["goblet",[2,3],["15","15–20"]],["bestpush",[2,3],["8","8–12"]],["row1",[2,3],["12","12–15"]],["rdl",[2,3],["12","15–20"]],["curl",[2,3],["12","12–15"]],["triext",[2,3],["12","12–15"]]]}
 };
 const ACTIVE = {t:"Walk + core",mins:50,active:true,items:[["walk",[1],[35]],["deadbug",[2],[10]],["revcrunch",[2],[10]],["plank",[2],[30]],["splank",[2],[20]],["catcow",[1],[10]],["hipflex",[1],[30]],["child",[1],[45]]]};
+const PCARE = {t:"Period care",mins:15,active:true,items:[["breath",[1],[60]],["kneechest",[1],[45]],["ptilt",[1],[10]],["catcow",[1],[8]],["child",[1],[60]],["legswall",[1],[120]],["walk",[1],[10]]]};
 const REST = {t:"Rest day",mins:10,active:true,items:[["catcow",[1],[10]],["hamstr",[1],[30]],["child",[1],[60]]]};
 const PLAN_BY_WEEKDAY = {0:"rest",1:"A",2:"active",3:"B",4:"rest",5:"C",6:"active"};
 
@@ -416,7 +441,8 @@ const PLAN_BY_WEEKDAY = {0:"rest",1:"A",2:"active",3:"B",4:"rest",5:"C",6:"activ
 P1.A.t = "Squats & push-ups"; P1.B.t = "Legs & abs"; P1.C.t = "Slow & strong";
 P2.A.t = "Dumbbell day A"; P2.B.t = "Dumbbell day B"; P2.C.t = "Dumbbell day C";
 const DESC = { A:"Squats, table push-ups, bridges, crunches, plank", B:"Lunges, knee push-ups, wall sit, lots of abs", C:"Slow squats, push-ups, single-leg bridges, core", active:"A brisk walk, then a short ab routine", rest:"Three gentle stretches. Recovery is training too." };
-const ICON = { A:"💪", B:"🦵", C:"🔥", active:"👟", rest:"😴" };
+const ICON = { A:"💪", B:"🦵", C:"🔥", active:"👟", rest:"😴", pcare:"🌸" };
+DESC.pcare = "15 gentle minutes that ease cramps. Resting instead is okay too.";
 const sv = d => `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const IC = {
   dumbbell: sv('<path d="M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11"/>'),
@@ -546,6 +572,19 @@ function animLoop(now){
 }
 requestAnimationFrame(animLoop);
 
+Object.assign(EX, {
+  breath:{n:"Belly breathing",unit:"sec",cues:["Lie on your back, knees bent, one hand on your belly","Breathe in slowly through your nose for 4 counts and let your belly rise","Breathe out for 6 counts. Long, slow breaths calm cramps"]},
+  kneechest:{n:"Knees-to-chest hug",unit:"sec",cues:["Lie on your back and hug both knees toward your chest","Rock gently side to side if it feels good","Keep your head and shoulders relaxed on the floor"]},
+  ptilt:{n:"Pelvic tilts",unit:"reps",cues:["Lie on your back, knees bent, feet flat","Gently press your lower back into the floor, then let it relax","Small and slow. It massages the lower back and belly"]},
+  legswall:{n:"Legs up the wall",unit:"sec",cues:["Sit sideways next to a wall, then swing your legs up it as you lie back","Bottom close to the wall, arms resting out to the sides","Close your eyes and breathe. Great for lower-back ache"]}
+});
+Object.assign(ANIM, {
+  breath:{A:{h:[98,110],t:-90,fF:[132,116],fB:[130,116],hF:[86,103],hB:[84,105]},B:{c:5,hF:[86,99],hB:[84,101]},props:{mat:1},d:5000},
+  kneechest:{A:{h:[100,110],t:-90,fF:[112,80],fB:[110,82],hF:[100,84],hB:[98,86]},B:{fF:[104,76],fB:[102,78],hF:[96,80],hB:[94,82]},props:{mat:1},d:3200},
+  ptilt:{A:{h:[98,110],t:-90,fF:[132,116],fB:[130,116],hF:[100,116],hB:[98,116]},B:{h:[98,106],t:-84},props:{mat:1},d:2600},
+  legswall:{A:{h:[96,110],t:-90,fF:[98,40],fB:[100,42],hF:[40,116],hB:[38,116]},B:{h:[96,109]},props:{mat:1,wall:112},d:5000}
+});
+
 /* set-up distances and mistakes to avoid */
 const GUIDE = {
   squat:{s:"Feet about shoulder-width apart (30–40 cm), toes turned out a little. Weight spread over your whole foot.",a:"Knees caving inward, heels lifting off the floor, rounding your lower back."},
@@ -588,6 +627,12 @@ const GUIDE = {
   curl:{s:"Feet hip-width. Elbows tucked at your sides, palms facing forward.",a:"Swinging your body, elbows drifting forward."},
   triext:{s:"Stand or sit tall, holding one dumbbell overhead with both hands.",a:"Elbows flaring wide, arching your lower back."}
 };
+Object.assign(GUIDE, {
+  breath:{s:"Lie on a mat or bed, knees bent, one hand on your belly. A hot water bag on your belly makes this even better.",a:"Breathing fast into your chest. Keep it slow and into the belly."},
+  kneechest:{s:"Lie on your back and hold the fronts of your knees (or behind your thighs if knees are sensitive).",a:"Lifting your head and straining your neck."},
+  ptilt:{s:"Lie on your back, knees bent, feet flat and hip-width.",a:"Big, forceful movements. Keep it tiny and gentle."},
+  legswall:{s:"Bottom about 10–15 cm from the wall, legs resting up it, a pillow under your head if you like.",a:"Staying if your legs tingle. Bend your knees or come down."}
+});
 const guideSetup = id => GUIDE[id] ? `<div class="guide setup"><b>Set up:</b> ${GUIDE[id].s}</div>` : "";
 const guideAvoid = id => GUIDE[id] ? `<div class="guide avoid"><b>Avoid:</b> ${GUIDE[id].a}</div>` : "";
 
@@ -638,10 +683,10 @@ function renderMoves(){
 let beanTap = null, beanTimer = null;
 function xpTotal(){
   let x = 0;
-  for (const d of Object.values(state.days)){
+  for (const [dk, d] of Object.entries(state.days)){
     Object.values(d.sets || {}).forEach(a => (a || []).forEach(v => { if (v) x += 5; }));
-    if (d.warm) x += 5; if (d.done) x += 50; if ((d.steps || 0) >= STEP_GOAL) x += 30;
-    if (d.pre && d.post) x += 20; if ((d.water || 0) >= 10) x += 10; if (d.party) x += 50;
+    if (d.warm) x += 5; if (d.done) x += 50; if ((d.steps || 0) >= stepGoal(dk)) x += 30;
+    if (d.pre && d.post) x += 20; if ((d.water || 0) >= waterGoal(dk)) x += 10; if (d.party) x += 50;
   }
   return x + state.tests.length * 40;
 }
@@ -669,11 +714,13 @@ function beanSVG(mood){
   return `<svg viewBox="0 0 100 100" width="100%" height="100%" fill="none" stroke-linecap="round" aria-hidden="true">${back}${extra}<path d="${armPath}" stroke="${V}" stroke-width="7"/><ellipse cx="40" cy="92" rx="8" ry="4" fill="${V}"/><ellipse cx="60" cy="92" rx="8" ry="4" fill="${V}"/><ellipse cx="50" cy="56" rx="29" ry="34" fill="${V}"/><ellipse cx="40" cy="35" rx="7" ry="4.5" fill="${OV}" opacity=".35"/><g stroke="${OV}" stroke-width="3">${eyes}${mouth}</g>${front}</svg>`;
 }
 function buddyCard(d, sid, started, fuel){
-  const x = xpTotal(), lv = levelOf(x), into = x - (lv - 1) * 300, maxed = lv >= LEVELS.length, stepsOk = (d.steps || 0) >= STEP_GOAL;
+  const x = xpTotal(), lv = levelOf(x), into = x - (lv - 1) * 300, maxed = lv >= LEVELS.length, stepsOk = (d.steps || 0) >= stepGoal();
   let mood = "hi", msg;
   if (beanTap){ mood = "happy"; msg = beanTap; }
   else if (d.done && stepsOk && fuel === 2){ mood = "party"; msg = "All 3 missions done! I’m doing a happy dance."; }
-  else if (d.done){ mood = "proud"; msg = !stepsOk ? `Workout done! Now ${(STEP_GOAL - (d.steps || 0)).toLocaleString()} steps to go.` : fuel < 2 ? "Workout done! Don’t forget your meals." : "Look at those muscles!"; }
+  else if (d.done){ mood = "proud"; msg = !stepsOk ? `Workout done! Now ${(stepGoal() - (d.steps || 0)).toLocaleString()} steps to go.` : fuel < 2 ? "Workout done! Don’t forget your meals." : "Look at those muscles!"; }
+  else if (sid === "pcare"){ mood = "happy"; msg = pickOne(["Be gentle with yourself today. A hot water bag and child’s pose are your best friends.", "Period days are for rest. Even 5 minutes of stretching counts.", "Warm drink, cosy blanket, slow breathing. You’re doing great."]); }
+  else if (periodDay() && !d.done){ mood = "happy"; msg = "Lighter workout today. Listen to your body; stop if anything feels wrong."; }
   else if (sid === "rest"){ mood = "sleepy"; msg = "Rest day. Even beans need naps. Zzz…"; }
   else if (started){ mood = "happy"; msg = "You started! Don’t leave me hanging."; }
   else { const h = new Date().getHours(); msg = h < 12 ? "Morning! I’m Bean, your workout buddy. Let’s move!" : h < 18 ? "Psst… your workout is waiting for you." : "Evening workout? I’m in if you are."; }
@@ -682,7 +729,7 @@ function buddyCard(d, sid, started, fuel){
 function celebrateChecks(){
   checkBadges();
   const d = state.days[dkey()];
-  if (d && !d.party && d.done && (d.steps || 0) >= STEP_GOAL && d.pre && d.post){
+  if (d && !d.party && d.done && (d.steps || 0) >= stepGoal() && d.pre && d.post){
     d.party = true; save(); setTimeout(() => { confetti(); toast("All 3 missions done! +50 XP bonus"); }, 250);
   }
   const lv = levelOf(xpTotal());
@@ -762,6 +809,7 @@ const plannedId = (date = new Date()) => PLAN_BY_WEEKDAY[date.getDay()];
 function sessionFor(id){
   if (id === "active") return ACTIVE;
   if (id === "rest") return REST;
+  if (id === "pcare") return PCARE;
   const ph = +state.settings.phase;
   const base = (ph === 2 ? P2 : P1)[id] || P1.A;
   if (ph === 1 && state.settings.hasDb && DBX[id]) return { ...base, mins: base.mins + 8, items: [...base.items, ...DBX[id]] };
@@ -770,17 +818,31 @@ function sessionFor(id){
 function unitText(u, a){
   return u === "each" ? `${a} each side` : u === "sec" ? `${a} sec` : u === "esec" ? `${a} sec each side` : u === "min" ? `${a} min` : `${a} reps`;
 }
-function dose(item, s){
+function dose(item, s, light){
   const [id, sets, amts] = item; const u = EX[id].unit;
-  const n = sets[Math.min(s, sets.length - 1)], a = amts[Math.min(s, amts.length - 1)];
+  let n = sets[Math.min(s, sets.length - 1)], a = amts[Math.min(s, amts.length - 1)];
+  if (light){ n = Math.min(n, 2); a = Math.max(1, Math.round(parseFloat(String(a).split("–")[0]) * 0.6)); }
   const secs = (u === "sec" || u === "esec") ? (+a) * (u === "esec" ? 2 : 1) : 0;
   return { n, a, u, secs, text: unitText(u, a) };
 }
-function todaySid(){ return day().session || plannedId(); }
+const periods = () => ((state.cycle || {}).periods || []);
+const curPeriod = () => { const ps = periods(), p = ps[ps.length - 1]; return p && !p.end ? p : null; };
+function periodDay(k = dkey()){ const p = curPeriod(); if (!p) return 0; const n = diff(p.start, k) + 1; return n >= 1 ? n : 0; }
+const inPeriod = k => periods().some(p => diff(p.start, k) >= 0 && (p.end ? diff(k, p.end) >= 0 : diff(k, dkey()) >= 0));
+function isLight(){
+  const pd = periodDay(), d = day(); if (!pd) return false;
+  if (d.pmode === "normal") return false; if (d.pmode === "light") return true;
+  return pd >= 4 || !!d.pchoice;
+}
+function todaySid(){
+  const d = day(), pd = periodDay();
+  if (pd && pd <= 3 && !d.pchoice) return "pcare";
+  return d.session || plannedId();
+}
 function buildSteps(sid){
-  const sess = sessionFor(sid), s = isStrength(sid) ? stageIdx() : 0, steps = [];
+  const sess = sessionFor(sid), s = isStrength(sid) ? stageIdx() : 0, steps = [], light = sid !== "pcare" && sid !== "rest" && isLight();
   if (isStrength(sid)) steps.push({ warm:true });
-  sess.items.forEach((it, i) => { const ds = dose(it, s); for (let j = 0; j < ds.n; j++) steps.push({ i, j, id:it[0], ds }); });
+  sess.items.forEach((it, i) => { const ds = dose(it, s, light); for (let j = 0; j < ds.n; j++) steps.push({ i, j, id:it[0], ds }); });
   return steps;
 }
 const stepDone = (st, d) => st.warm ? !!d.warm : !!(d.sets[st.i] && d.sets[st.i][st.j]);
@@ -791,7 +853,7 @@ function streak(){
   return n;
 }
 function weekKeys(k = dkey()){ const dow = (pkey(k).getDay() + 6) % 7; const mon = addDays(k, -dow); return Array.from({length:7}, (_, i) => addDays(mon, i)); }
-function protein(d){ let p = (d.pre ? PRE_P : 0) + (d.post ? POST_P : 0); FOODS.forEach(f => p += (d.food[f.id] || 0) * f.p); return p; }
+function protein(d){ let p = (d.pre ? PRE_P : 0) + (d.post ? POST_P : 0); [...FOODS, ...PFOODS].forEach(f => p += (d.food[f.id] || 0) * f.p); return p; }
 function ring(pct, size, stroke, color){
   const r = (size - stroke) / 2, c = 2 * Math.PI * r, off = c * (1 - Math.max(0, Math.min(1, pct)));
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--soft)" stroke-width="${stroke}"/><circle class="fg" cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}"/></svg>`;
@@ -806,7 +868,7 @@ function renderHome(){
   const dn = Math.max(1, diff(s.startDate, k) + 1), line = `Day ${dn}. ${LINES[dn % LINES.length]}`;
   const strip = weekKeys().map(wk => {
     const dd = state.days[wk], dt = pkey(wk), id = (dd && (dd.doneId || dd.session)) || plannedId(dt);
-    const cls = "dayc" + (dd && dd.done ? " done" : "") + (wk === k ? " today" : "");
+    const cls = "dayc" + (dd && dd.done ? " done" : "") + (wk === k ? " today" : "") + (inPeriod(wk) ? " per" : "");
     return `<button class="${cls}" data-act="dayinfo" data-k="${wk}" aria-label="${dt.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"})}"><span>${DAYNAMES[dt.getDay()].slice(0,1)}</span><span class="dot">${dd && dd.done ? "✓" : dt.getDate()}</span></button>`;
   }).join("");
 
@@ -817,26 +879,27 @@ function renderHome(){
   const steps = buildSteps(sid), done = steps.filter(x => stepDone(x, d)).length;
   const started = done > 0 && !d.done;
   const moves = sess.items.length;
-  const kicker = sid === plannedId() ? `${DAYNAMES[new Date().getDay()]}’s workout` : "Today’s workout (swapped)";
+  const pdN = periodDay(), kicker = pdN ? `Period day ${pdN}${sid === "pcare" ? ", go gently" : isLight() ? ", lighter version" : ""}` : sid === plannedId() ? `${DAYNAMES[new Date().getDay()]}’s workout` : "Today’s workout (swapped)";
   const hero = d.done
     ? `<div class="hero done" data-emoji="🎉"><div class="hero-fig" style="padding:8px">${beanSVG("party")}</div><div class="kicker">Today</div><h1>Done! You showed up.</h1><p class="meta">${d.log ? esc(d.log) : sess.t + " complete"}${st > 1 ? `. ${st} days in a row 🔥` : ""}</p><button class="go" data-act="undo">Undo</button></div>`
     : `<div class="hero" data-emoji="${ICON[sid]}"><div class="hero-fig">${figSVG(sess.items[0][0])}</div><div class="kicker">${kicker}</div><h1>${sess.t}</h1>
         <p class="meta">${moves} moves, about ${sess.mins} min${started ? `. ${done} of ${steps.length} done` : ""}</p>
-        <button class="go" data-act="start">${started ? "▶ Continue" : sid === "rest" ? "▶ Start stretching" : "▶ Start workout"}</button>
+        <button class="go" data-act="start">${started ? "▶ Continue" : sid === "rest" || sid === "pcare" ? "▶ Start gentle routine" : "▶ Start workout"}</button>
         <button class="swap" data-act="swap">Not feeling it? Pick a different workout</button></div>`;
 
   const fuel = (d.pre ? 1 : 0) + (d.post ? 1 : 0);
   const tip = TIPS[((diff(s.startDate, k) % TIPS.length) + TIPS.length) % TIPS.length];
   return `
-    <div class="top"><div><div class="hello">${hi}</div><div class="muted small">${line}</div></div><div class="top-right"><span class="flame" title="Days in a row">${IC.flame} ${st}</span><button class="icon-btn" data-act="settings" aria-label="Settings">${IC.gear}</button></div></div>
+    <div class="top"><div><div class="hello">${hi}</div><div class="muted small">${line}</div></div><div class="top-right">${periodToggle()}<span class="flame" title="Days in a row">${IC.flame} ${st}</span><button class="icon-btn" data-act="settings" aria-label="Settings">${IC.gear}</button></div></div>
     <div class="strip">${strip}</div>
     ${hero}
+    ${periodCard(d)}
     ${buddyCard(d, sid, started, fuel)}
     ${new Date().getDay() === 0 && state.recapSeen !== weekKeys()[0] ? `<div class="label">Sunday recap</div>${recapCard(true)}` : ""}
     <div class="label">Today’s 3 missions</div>
     <div class="missions">
       <button class="mission${d.done ? " ok" : ""}" data-act="${d.done ? "noop" : "start"}">${mRing(d.done ? 1 : done / steps.length, d.done ? IC.check : IC.dumbbell)}<b>Workout</b><span class="small muted">${d.done ? "Done" : "Not yet"}</span></button>
-      <button class="mission${(d.steps||0) >= STEP_GOAL ? " ok" : ""}" data-act="steps">${mRing((d.steps || 0) / STEP_GOAL, IC.steps)}<b>${(d.steps||0).toLocaleString()}</b><span class="small muted">of 8,000 steps</span></button>
+      <button class="mission${(d.steps||0) >= stepGoal() ? " ok" : ""}" data-act="steps">${mRing((d.steps || 0) / stepGoal(), IC.steps)}<b>${(d.steps||0).toLocaleString()}</b><span class="small muted">of ${stepGoal().toLocaleString()} steps</span></button>
       <button class="mission${fuel === 2 ? " ok" : ""}" data-act="tofood">${mRing(fuel / 2, IC.egg)}<b>${fuel} of 2</b><span class="small muted">meals ticked</span></button>
     </div>
     ${plankCard()}
@@ -849,7 +912,7 @@ function renderFood(){
   const d = day(), w = parseFloat(state.settings.weight) || 61.9, goal = Math.round(w * 1.2), p = protein(d);
   const foods = FOODS.map(f => { const c = d.food[f.id] || 0;
     return `<div class="food${c ? " has" : ""}"><button data-act="food+" data-id="${f.id}" style="all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px" aria-label="Add ${f.n}"><span class="e">${f.e}</span><b>${f.n}</b><span class="small muted">+${f.p} g</span></button>${c ? `<span class="badge">${c}</span><button class="minus" data-act="food-" data-id="${f.id}" aria-label="Remove one ${f.n}">−</button>` : ""}</div>`; }).join("");
-  const drops = Array.from({length:10}, (_, i) => `<i class="${i < d.water ? "on" : ""}"></i>`).join("");
+  const drops = Array.from({length:waterGoal()}, (_, i) => `<i class="${i < d.water ? "on" : ""}"></i>`).join("");
   return `
     <div class="top"><div class="hello">Food 🍽️</div></div>
     <p class="muted" style="margin-top:-8px">Eat your usual food. Just tick your two fixed meals, and tap anything else for a protein count if you like.</p>
@@ -860,10 +923,11 @@ function renderFood(){
     <div class="label">Your fixed meals</div>
     <button class="meal" data-act="pre" aria-pressed="${!!d.pre}"><span class="e">🥚🍌</span><span class="t"><b>Before workout</b><br><span class="small muted">2 eggs + 2 bananas, about 45 min before</span></span><span class="tick">${d.pre ? "✓" : ""}</span></button>
     <button class="meal" data-act="post" aria-pressed="${!!d.post}"><span class="e">🫘</span><span class="t"><b>After workout</b><br><span class="small muted">Soya chunks, 50 g dry (about 26 g protein)</span></span><span class="tick">${d.post ? "✓" : ""}</span></button>
+    ${periodDay() ? periodFoods(d) : ""}
     <div class="label">Ate something else? Tap it</div>
     <div class="foods">${foods}</div>
     <div class="label">Water</div>
-    <div class="card water"><div><b>${d.water} of 10 glasses</b><div class="drops">${drops}</div></div><div style="display:flex;gap:6px"><button class="btn ghost sm" data-act="water-" aria-label="Remove a glass">−</button><button class="btn sm" data-act="water+">💧 +1</button></div></div>
+    <div class="card water"><div><b>${d.water} of ${waterGoal()} glasses</b>${periodDay() ? `<div class="small muted">A little extra water on period days</div>` : ""}<div class="drops">${drops}</div></div><div style="display:flex;gap:6px"><button class="btn ghost sm" data-act="water-" aria-label="Remove a glass">−</button><button class="btn sm" data-act="water+">💧 +1</button></div></div>
     <div class="label">Good to know</div>
     <details class="more"><summary>🎯 Easy wins for a flatter stomach</summary><p>Less sugar in chai and drinks. Fried snacks a few times a week instead of daily. Some protein at every meal so you stay full longer.</p><p>No skipping meals, no cutting rice or roti. Small changes you can keep forever beat a strict diet you quit.</p></details>
     <details class="more"><summary>🫘 How to cook soya chunks</summary><p>Boil for 5 minutes, squeeze out all the water, then cook them in your usual masala. 50 g dry a day is plenty.</p></details>
@@ -917,6 +981,8 @@ function renderProgress(){
       <button class="btn wide ${due ? "" : "ghost"}" data-act="checkin">📝 ${due ? "Do my check-in" : "Add a check-in anyway"}</button>
       ${tests.length ? `<div style="overflow-x:auto"><table class="hist"><thead><tr><th>Date</th><th>Push-ups</th><th>Plank</th><th>Squats</th><th>Waist</th><th>Kg</th></tr></thead><tbody>${tests.map(t => `<tr><td>${fmtDate(t.date)}</td><td>${+t.push||"–"}</td><td>${t.plank ? +t.plank + " s" : "–"}</td><td>${+t.squat||"–"}</td><td>${t.waist ? +t.waist + " cm" : "–"}</td><td>${t.weight ? +t.weight : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
     </div>
+    <div class="label">Your periods</div>
+    <div class="card">${periodHistory()}</div>
     <div class="label">Waist and weight</div>
     <div class="card">${trendChart()}</div>
     <div class="label">Progress photos</div>
@@ -1055,11 +1121,11 @@ const sheet = $("#sheet"), sb = $("#sheetBody");
 function openSheet(html, onOpen){ sb.innerHTML = html; sheet.showModal(); onOpen && onOpen(); }
 function swapSheet(){
   const cur = todaySid();
-  openSheet(`<h2>Pick today’s workout</h2>${["A","B","C","active","rest"].map(id => `<button class="opt" data-act="pick" data-id="${id}" aria-pressed="${id === cur}"><span class="e">${ICON[id]}</span><span><b>${sessionFor(id).t}${id === plannedId() ? " (planned)" : ""}</b><br><span class="small muted">${+state.settings.phase === 2 && isStrength(id) ? sessionFor(id).items.slice(0,3).map(it => EX[it[0]].n).join(", ") : DESC[id]}</span></span></button>`).join("")}<button class="btn ghost wide" data-act="sclose">Cancel</button>`);
+  openSheet(`<h2>Pick today’s workout</h2>${(periodDay() ? ["pcare","A","B","C","active","rest"] : ["A","B","C","active","rest"]).map(id => `<button class="opt" data-act="pick" data-id="${id}" aria-pressed="${id === cur}"><span class="e">${ICON[id]}</span><span><b>${sessionFor(id).t}${id === plannedId() ? " (planned)" : ""}</b><br><span class="small muted">${+state.settings.phase === 2 && isStrength(id) ? sessionFor(id).items.slice(0,3).map(it => EX[it[0]].n).join(", ") : DESC[id]}</span></span></button>`).join("")}<button class="btn ghost wide" data-act="sclose">Cancel</button>`);
 }
 function daySheet(k){
   const today = dkey(), dt = pkey(k), dd = state.days[k];
-  const id = (dd && (dd.doneId || dd.session)) || plannedId(dt), sess = sessionFor(id);
+  const pdK = periodDay(k), id = (dd && dd.doneId) || (pdK && pdK <= 3 && !(dd && dd.pchoice) ? "pcare" : (dd && dd.session) || plannedId(dt)), sess = sessionFor(id);
   const title = dt.toLocaleDateString(undefined, { weekday:"long", day:"numeric", month:"short" });
   const st = isStrength(id) ? stageIdx() : 0;
   const list = `<ul class="exlist">${sess.items.map(it => { const ds = dose(it, st); return `<li><span>${EMO[it[0]] || "💪"} ${EX[it[0]].n}</span><b>${ds.n > 1 ? ds.n + " × " : ""}${ds.text}</b></li>`; }).join("")}</ul>`;
@@ -1306,6 +1372,100 @@ document.addEventListener("change", e => {
 
 const mRing = (pct, icon) => `<span class="mring">${ring(Math.min(1, pct), 58, 5, "currentColor")}<span class="mi">${icon}</span></span>`;
 
+Object.assign(EMO, { breath:"🌬️", kneechest:"🤗", ptilt:"🌸", legswall:"🧘" });
+/* ---------- period mode ---------- */
+const DROP = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11z"/></svg>';
+function periodToggle(){
+  const pd = periodDay();
+  return `<button class="ptog${pd ? " on" : ""}" data-act="ptog" aria-pressed="${!!pd}" aria-label="${pd ? `Period mode on, day ${pd}` : "Period mode off. Tap if you got your period"}">${DROP}${pd ? `<span>${pd}</span>` : ""}</button>`;
+}
+function periodDayAt(k){ const p = periods().find(p => diff(p.start, k) >= 0 && (p.end ? diff(k, p.end) >= 0 : diff(k, dkey()) >= 0)); return p ? diff(p.start, k) + 1 : 0; }
+function stepGoal(k = dkey()){ const n = periodDayAt(k); return n && n <= 3 ? 4000 : 8000; }
+function waterGoal(k = dkey()){ return periodDayAt(k) ? 12 : 10; }
+const PFOODS = [
+  {id:"palak",n:"Palak / spinach",e:"🥬",p:3,why:"Iron"},{id:"dates",n:"Dates, 3",e:"🌴",p:1,why:"Iron"},
+  {id:"amla",n:"Amla / orange",e:"🍊",p:1,why:"Vitamin C"},{id:"nuts",n:"Nuts and seeds",e:"🌰",p:5,why:"Magnesium"},
+  {id:"darkchoc",n:"Dark chocolate",e:"🍫",p:2,why:"Magnesium"},{id:"ginger",n:"Ginger tea",e:"🫖",p:0,why:"For cramps"}
+];
+function periodFoods(d){
+  const tiles = PFOODS.map(f => { const c = d.food[f.id] || 0;
+    return `<div class="food${c ? " has" : ""}"><button data-act="food+" data-id="${f.id}" style="all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px" aria-label="Add ${f.n}"><span class="e">${f.e}</span><b>${f.n}</b><span class="small muted">${f.why}</span></button>${c ? `<span class="badge">${c}</span><button class="minus" data-act="food-" data-id="${f.id}" aria-label="Remove one ${f.n}">−</button>` : ""}</div>`; }).join("");
+  return `<div class="label">Period foods</div><div class="card"><p class="small muted" style="margin-top:0">Iron and vitamin C help you recover. Magnesium eases cramps and bloating. Tap what you have today.</p><div class="foods">${tiles}</div></div>`;
+}
+function symRow(d, key, label, opts){
+  const cur = (d.psym || {})[key];
+  return `<div class="sym"><span>${label}</span><div class="symopts">${opts.map(o => `<button data-act="psym" data-k="${key}" data-v="${o}" aria-pressed="${cur === o}">${o}</button>`).join("")}</div></div>`;
+}
+function curPeriodDays(){ const p = curPeriod(); if (!p) return []; const out = []; for (let i = 0; diff(addDays(p.start, i), dkey()) >= 0; i++){ const k = addDays(p.start, i); if (state.days[k]) out.push(state.days[k]); } return out; }
+function symNote(d){
+  const sy = d.psym || {}, heavyDays = curPeriodDays().filter(x => (x.psym || {}).flow === "Heavy").length;
+  if (heavyDays >= 3) return `<p class="small symnote">Heavy flow for ${heavyDays} days now. That’s worth mentioning to a doctor, especially if you feel tired or dizzy.</p>`;
+  if (sy.cramps === "Bad") return `<p class="small symnote">Bad cramps today. Try a hot water bag and the gentle routine, and open Cramps and care tips. If pain relief doesn’t help, see a doctor.</p>`;
+  if (sy.energy === "Low") return `<p class="small symnote">Low energy is normal right now. Rest counts. Even 5 minutes of the gentle routine is a win.</p>`;
+  return "";
+}
+function periodSummary(p){
+  const end = p.end || dkey(), heavy = [], bad = [];
+  for (let i = 0; diff(addDays(p.start, i), end) >= 0; i++){ const sy = (state.days[addDays(p.start, i)] || {}).psym || {}; if (sy.flow === "Heavy") heavy.push(i + 1); if (sy.cramps === "Bad") bad.push(i + 1); }
+  const parts = []; if (heavy.length) parts.push(`heavy on day ${heavy.join(", ")}`); if (bad.length) parts.push(`bad cramps on day ${bad.join(", ")}`);
+  return parts.length ? `<div class="small muted" style="margin:-2px 0 6px">${parts.join("; ")}</div>` : "";
+}
+function periodQuickSheet(){
+  const pd = periodDay();
+  openSheet(`<h2>🌸 Period day ${pd}</h2><p class="muted">${pd <= 3 ? "Gentle care days. Your workout is the 15-minute routine for cramps." : "Lighter workouts until your period ends."}</p>
+    <button class="btn wide" data-act="ptips">Cramps and care tips</button>
+    <button class="btn ghost wide" data-act="pend" style="margin-top:8px">My period ended</button>
+    <details class="more" style="margin-top:8px;background:var(--bg)"><summary>Wrong day? Change the start date</summary>
+      <label class="field" style="margin-top:10px"><span>My period started on</span><input id="pEditStart" type="date" value="${curPeriod().start}" max="${dkey()}"></label>
+      <button class="btn sm" data-act="pfix">Save start date</button></details>
+    <button class="btn ghost wide" data-act="sclose" style="margin-top:8px">Close</button>`);
+}
+function periodCard(d){
+  const pd = periodDay();
+  if (!pd) return "";
+  const phase = pd <= 3 ? "Rest and comfort. Your workout is a 15-minute gentle routine that eases cramps. Resting instead is completely okay."
+    : pd <= 7 ? "Easing back in. Workouts are lighter: fewer sets and fewer reps. Stop if anything feels off."
+    : "Still on your period? Keep it light. If it has ended, tap Period ended.";
+  const swap = pd <= 3
+    ? (d.pchoice ? `<button class="btn ghost sm" data-act="pcareback">Switch back to the gentle routine</button>` : `<button class="btn ghost sm" data-act="plight">Feeling okay? Do a light workout instead</button>`)
+    : (isLight() ? `<button class="btn ghost sm" data-act="pnormal">Feeling strong? Do the full workout</button>` : `<button class="btn ghost sm" data-act="plightagain">Go lighter today</button>`);
+  return `<div class="card pcard"><div class="pc-top"><div class="pday"><small>Day</small>${pd}</div><div style="flex:1;min-width:0"><b>Period mode is on</b><p class="small muted" style="margin:2px 0 0">${phase}</p></div></div>
+    <div class="symbox"><b class="small">How are you today?</b>${symRow(d, "flow", "Flow", ["Light","Medium","Heavy"])}${symRow(d, "cramps", "Cramps", ["None","Mild","Bad"])}${symRow(d, "energy", "Energy", ["Low","Okay","Good"])}${symRow(d, "mood", "Mood", ["Low","Okay","Good"])}${symNote(d)}</div>
+    <div class="grid2" style="margin-top:12px"><button class="btn sm" data-act="ptips">Cramps and care tips</button><button class="btn ghost sm" data-act="pend">Period ended</button></div>
+    <div style="margin-top:8px;text-align:center">${swap}</div></div>`;
+}
+function periodTipsSheet(){
+  openSheet(`<h2>🌸 Period care</h2>
+    <details class="more" open><summary>Easing cramps</summary>
+      <p><b>Heat:</b> a hot water bag or heating pad on your lower belly or back for 15–20 minutes.</p>
+      <p><b>Gentle movement:</b> the 15-minute care routine (belly breathing, knees-to-chest, child’s pose, legs up the wall). Light movement often eases cramps.</p>
+      <p><b>Warm drinks:</b> ginger tea or warm water. Curling up on your side with knees bent can also help.</p>
+      <p><b>Pain relief:</b> an over-the-counter pain reliever from a pharmacy can help. Follow the label, and ask a pharmacist if you’re unsure what suits you.</p></details>
+    <details class="more"><summary>What to eat</summary>
+      <p><b>Iron</b> replaces what you lose: palak, chana, rajma, dates, eggs, and your soya chunks. Have it with <b>vitamin C</b> (lemon, orange, amla) to absorb more.</p>
+      <p><b>Magnesium and potassium</b> for cramps and bloating: bananas (you already eat these!), nuts, seeds, a little dark chocolate.</p>
+      <p><b>Water</b>, lots of it. Go easy on very salty or fried food and too much tea or coffee if you feel bloated.</p>
+      <p>Your eggs, bananas and soya chunks are already great period food. Keep them going.</p></details>
+    <details class="more"><summary>Energy and mood</summary>
+      <p>Feeling tired or low is normal. Sleep a little more, keep your streak alive with the gentle routine, and skip the guilt. Rest is part of training.</p></details>
+    <details class="more"><summary>When to see a doctor</summary>
+      <p>Talk to a doctor if you soak through a pad every 1–2 hours for several hours, your period lasts more than 7 days, pain stops you from daily life even with pain relief, you feel dizzy or faint, or your cycles are very irregular (often shorter than 21 days, longer than 45, or missing for 3 months).</p></details>
+    <button class="btn wide" data-act="sclose" style="margin-top:6px">Got it</button>`);
+}
+function periodHistory(){
+  const ps = periods(); if (!ps.length) return `<p class="small muted" style="margin:0">Tap “Got my period” on the home screen when it starts. Your history builds up here, so you can show a doctor if you ever need to.</p>`;
+  const gaps = ps.slice(1).map((p, i) => diff(ps[i].start, p.start));
+  const rows = ps.slice().reverse().map(p => `<div class="recap-row"><span>${fmtDate(p.start)}</span><b>${p.end ? (diff(p.start, p.end) + 1) + " days" : "ongoing"}</b></div>${periodSummary(p)}`).join("");
+  const last = ps[ps.length - 1], since = diff(last.start, dkey());
+  const gapNote = !curPeriod() && since >= 60 ? `<div class="guide avoid" style="margin-top:10px">It’s been ${since} days since your last period started. With irregular cycles that can happen, but if it reaches 3 months, it’s worth a doctor check-up.</div>` : "";
+  return `${rows}${gapNote}${gaps.length ? `<p class="small" style="margin:10px 0 0"><b>Days between periods:</b> ${gaps.join(", ")}. Irregular cycles are common, so the app never assumes a date. It just follows your taps.</p>` : ""}`;
+}
+function periodStartSheet(){
+  openSheet(`<h2>🌸 Got my period</h2><p class="muted">When did it start? Your workouts adjust automatically: gentle care for the first 3 days, then lighter workouts until it ends.</p>
+    <label class="field"><span>Start date</span><input id="pStartIn" type="date" value="${dkey()}" max="${dkey()}"></label>
+    <div class="grid2"><button class="btn ghost" data-act="sclose">Cancel</button><button class="btn" data-act="psave">Start period mode</button></div>`);
+}
+
 /* ---------- clicks ---------- */
 document.addEventListener("click", e => {
   const tb = e.target.closest("nav.tabs button");
@@ -1329,13 +1489,24 @@ document.addEventListener("click", e => {
     case "plankstop": clearInterval(plankIv); sheet.close(); break;
     case "plankrest": state.plank.done[plankDone() + 1] = dkey(); save(); render(); toast("Rest day logged"); break;
     case "recapok": state.recapSeen = weekKeys()[0]; save(); render(); break;
+    case "pstart": periodStartSheet(); break;
+    case "pfix": { const cp = curPeriod(), v = $("#pEditStart").value; if (cp && v){ cp.start = v; save(); sheet.close(); render(); toast(`Got it. Today is day ${periodDay()}`); } break; }
+    case "psym": { d.psym = d.psym || {}; const k2 = b.dataset.k; d.psym[k2] = d.psym[k2] === b.dataset.v ? undefined : b.dataset.v; save(); render(); break; }
+    case "ptog": periodDay() ? periodQuickSheet() : periodStartSheet(); break;
+    case "psave": { const v = $("#pStartIn").value || dkey(); state.cycle = state.cycle || { periods:[] }; state.cycle.periods.push({ start:v, end:null }); const dd = day(); delete dd.pchoice; delete dd.pmode; if (!dd.done){ dd.sets = {}; dd.warm = false; } save(); sheet.close(); render(); toast("Period mode on. Go gently 🌸"); break; }
+    case "pend": if (confirm("Mark your period as ended today? Workouts go back to normal.")){ const cp = curPeriod(); if (cp){ cp.end = dkey(); const dd = day(); delete dd.pchoice; delete dd.pmode; save(); if (sheet.open) sheet.close(); render(); toast("Back to your normal plan 💪"); } } break;
+    case "ptips": periodTipsSheet(); break;
+    case "plight": { const dd = day(); dd.pchoice = true; dd.session = plannedId() === "rest" ? "active" : plannedId(); dd.sets = {}; dd.warm = false; save(); render(); toast("Light workout ready"); break; }
+    case "pcareback": { const dd = day(); delete dd.pchoice; delete dd.pmode; dd.sets = {}; save(); render(); break; }
+    case "pnormal": day().pmode = "normal"; save(); render(); toast("Full workout today"); break;
+    case "plightagain": day().pmode = "light"; save(); render(); toast("Lighter workout today"); break;
     case "start": openPlayer(); break;
     case "undo": d.done = false; delete d.doneId; save(); render(); break;
     case "swap": swapSheet(); break;
-    case "pick": if (b.dataset.id !== todaySid()){ d.session = b.dataset.id; d.sets = {}; d.warm = false; save(); } sheet.close(); render(); toast("Workout changed"); break;
+    case "pick": if (b.dataset.id !== todaySid()){ d.session = b.dataset.id; if (periodDay()) d.pchoice = b.dataset.id !== "pcare"; d.sets = {}; d.warm = false; save(); } sheet.close(); render(); toast("Workout changed"); break;
     case "steps": stepsSheet(); break;
     case "stadd": { const i = $("#stIn"); i.value = (+i.value || 0) + +b.dataset.n; break; }
-    case "stsave": d.steps = Math.max(0, Math.min(100000, Math.round(+$("#stIn").value || 0))); save(); sheet.close(); render(); if (d.steps >= STEP_GOAL) { toast("Step goal hit! 👟"); } break;
+    case "stsave": d.steps = Math.max(0, Math.min(100000, Math.round(+$("#stIn").value || 0))); save(); sheet.close(); render(); if (d.steps >= stepGoal()) { toast("Step goal hit! 👟"); } break;
     case "tofood": tab = "food"; render(); scrollTo(0,0); break;
     case "pal": state.settings.palette = b.dataset.p; applyPalette(); save(); document.querySelectorAll("[data-act=pal]").forEach(x => x.setAttribute("aria-pressed", x.dataset.p === b.dataset.p)); render(); break;
     case "settings": settingsSheet(); break;
@@ -1356,7 +1527,7 @@ document.addEventListener("click", e => {
     case "post": d.post = !d.post; save(); render(); if (d.post) toast("Recovery protein ✓"); break;
     case "food+": d.food[b.dataset.id] = (d.food[b.dataset.id] || 0) + 1; save(); render(); break;
     case "food-": d.food[b.dataset.id] = Math.max(0, (d.food[b.dataset.id] || 0) - 1); save(); render(); break;
-    case "water+": d.water = Math.min(20, (d.water || 0) + 1); save(); render(); if (d.water === 10) toast("Water goal hit 💧"); break;
+    case "water+": d.water = Math.min(20, (d.water || 0) + 1); save(); render(); if (d.water === waterGoal()) toast("Water goal hit 💧"); break;
     case "water-": d.water = Math.max(0, (d.water || 0) - 1); save(); render(); break;
     case "formok": state.settings.formOk = !state.settings.formOk; save(); render(); break;
     case "levelup": { const ph = +state.settings.phase; if (ph < 3){ state.settings.phase = ph + 1; state.settings.phaseStart = dkey(); delete state.settings.formOk; save(); confetti(); tab = "home"; render(); toast(ph === 1 ? "Dumbbell stage unlocked! 🏋️" : "Gym stage unlocked! 🏟️"); } break; }
@@ -1389,8 +1560,13 @@ function seedHistory(){
   if (!state.days["2026-11-25"]) state.days["2026-11-25"] = { sets:{}, pre:false, post:false, food:{}, water:0, done:false, session:"active" };
   save();
 }
+function seedPeriod(){
+  /* start clean: no period logged until you tap the drop yourself */
+  if (state.settings.seed4) return; state.settings.seed4 = true;
+  state.cycle = { periods:[] }; save();
+}
 function applyPalette(){
-  seedHistory();
+  seedHistory(); seedPeriod();
   if (!state.seen) state.seen = { squat:1, incpush:1, crunch:1, bridge:1 };
   if (!state.settings.themeV3){ state.settings.palette = "mocha"; state.settings.themeV2 = state.settings.themeV3 = true; }
   document.documentElement.dataset.palette = state.settings.palette || "mocha";
